@@ -1,0 +1,146 @@
+// Prisma Schema for Notion-like Backend
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ USER MANAGEMENT ============
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatar        String?
+  provider      Provider  // OAuth provider
+  providerId    String    @unique // OAuth provider user ID
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime  @default(now())
+
+  // Relations
+  ownedNotes    Note[]    @relation("NoteOwner")
+  sharedAccess  SharedAccess[] @relation("SharedAccessUser")
+  documentEdits DocumentEdit[]
+
+  @@index([provider, providerId])
+  @@map("users")
+}
+
+enum Provider {
+  GOOGLE
+  GITHUB
+}
+
+// ============ NOTES/DOCUMENTS ============
+
+model Note {
+  id          String   @id @default(cuid())
+  title       String   @default("Untitled")
+  content     Json     // Rich text content (blocks)
+  icon        String?
+  coverImage  String?
+
+  // Document metadata
+  isDeleted   Boolean  @default(false)
+  isArchived  Boolean  @default(false)
+
+  // Sharing flags
+  isPublic    Boolean  @default(false)
+  publicAccess AccessLevel? @default(VIEW) // VIEW or EDIT
+
+  ownerId     String
+  owner       User     @relation("NoteOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  sharedAccess SharedAccess[] @relation("NoteSharedAccess")
+  documentEdits DocumentEdit[]
+
+  @@index([ownerId])
+  @@index([isPublic])
+  @@index([isDeleted])
+  @@map("notes")
+}
+
+// ============ SHARING & PERMISSIONS ============
+
+model SharedAccess {
+  id          String      @id @default(cuid())
+  accessLevel AccessLevel
+
+  noteId      String
+  note        Note        @relation("NoteSharedAccess", fields: [noteId], references: [id], onDelete: Cascade)
+
+  userId      String?
+  user        User?       @relation("SharedAccessUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  // For invited users who haven't accepted yet
+  inviteEmail String?
+  inviteToken String?     @unique
+  inviteExpiresAt DateTime?
+  inviteAcceptedAt DateTime?
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([noteId, userId])
+  @@unique([noteId, inviteEmail])
+  @@index([userId])
+  @@index([inviteToken])
+  @@map("shared_access")
+}
+
+enum AccessLevel {
+  VIEW
+  EDIT
+}
+
+// ============ COLLABORATION TRACKING ============
+
+model DocumentEdit {
+  id          String   @id @default(cuid())
+
+  noteId      String
+  note        Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Operational Transformation data
+  operations  Json     // Array of operations
+  version     Int      // Document version
+
+  // Metadata
+  ipAddress   String?
+  userAgent   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([noteId, createdAt(sort: Desc)])
+  @@index([userId])
+  @@map("document_edits")
+}
+
+// ============ AI GENERATION HISTORY ============
+
+model AIGeneration {
+  id          String   @id @default(cuid())
+  noteId      String
+  prompt      String
+  generatedContent Json
+  model       String   // e.g., "gemini-pro"
+  tokensUsed  Int?
+
+  createdAt   DateTime @default(now())
+
+  @@index([noteId])
+  @@map("ai_generations")
+}
