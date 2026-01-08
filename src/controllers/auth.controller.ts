@@ -101,7 +101,7 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<void> => {
+export const logout = async (_req: Request, res: Response): Promise<void> => {
   // In a stateless JWT system, logout is handled client-side by deleting tokens
   // However, you can implement token blacklisting if needed
   res.json({

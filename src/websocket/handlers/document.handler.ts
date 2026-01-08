@@ -1,7 +1,7 @@
-import { Socket, Server as SocketIOServer } from 'socket.io';
+import { Server as SocketIOServer } from 'socket.io';
 import logger from '../../utils/logger';
 import prisma from '../../config/database';
-import { sharingService } from '../../services/sharing.service';
+import sharingService from '../../services/sharing.service';
 
 interface DocumentRoom {
   noteId: string;

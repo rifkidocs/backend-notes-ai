@@ -6,16 +6,6 @@ import { DocumentEditHandler } from './handlers/document.handler';
 import { CursorHandler } from './handlers/cursor.handler';
 import { PresenceHandler } from './handlers/presence.handler';
 
-interface SocketUser {
-  id: string;
-  email: string;
-  name: string | null;
-}
-
-interface AuthenticatedSocket extends Socket {
-  user?: SocketUser;
-}
-
 export class SocketServer {
   private io: SocketIOServer;
   private documentHandler: DocumentEditHandler;
@@ -84,15 +74,15 @@ export class SocketServer {
       logger.info(`User connected: ${socket.user?.email} (${socket.id})`);
 
       // Document events
-      socket.on('document:join', (data) => this.documentHandler.handleJoinDocument(socket, data));
-      socket.on('document:leave', (data) => this.documentHandler.handleLeaveDocument(socket, data));
-      socket.on('document:edit', (data) => this.documentHandler.handleDocumentEdit(socket, data));
+      socket.on('document:join', (data: any) => this.documentHandler.handleJoinDocument(socket, data));
+      socket.on('document:leave', (data: any) => this.documentHandler.handleLeaveDocument(socket, data));
+      socket.on('document:edit', (data: any) => this.documentHandler.handleDocumentEdit(socket, data));
 
       // Cursor events
-      socket.on('cursor:update', (data) => this.cursorHandler.handleCursorUpdate(socket, data));
+      socket.on('cursor:update', (data: any) => this.cursorHandler.handleCursorUpdate(socket, data));
 
       // Presence events
-      socket.on('presence:subscribe', (data) => this.presenceHandler.handlePresenceSubscribe(socket, data));
+      socket.on('presence:subscribe', (data: any) => this.presenceHandler.handlePresenceSubscribe(socket, data));
 
       // Disconnect
       socket.on('disconnect', () => {

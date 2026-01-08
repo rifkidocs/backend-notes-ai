@@ -2,7 +2,6 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../models/express.types';
 import sharingService from '../services/sharing.service';
 import logger from '../utils/logger';
-import { AccessLevel } from '@prisma/client';
 
 export const getSharingSettings = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {

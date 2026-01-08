@@ -1,6 +1,5 @@
 import prisma from '../config/database';
 import { AppError } from '../middleware/error.middleware';
-import { DocumentContent } from '../types/global';
 
 export class NotesService {
   async createNote(userId: string, data: { title?: string; content?: any }) {

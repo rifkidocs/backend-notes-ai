@@ -2,7 +2,6 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../models/express.types';
 import aiService from '../services/ai.service';
 import logger from '../utils/logger';
-import { aiLimiter } from '../middleware/rateLimit.middleware';
 
 export const generateContent = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {

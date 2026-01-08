@@ -7,7 +7,7 @@ import aiRoutes from './ai.routes';
 const router = Router();
 
 // Health check
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),

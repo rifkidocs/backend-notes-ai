@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { Provider } from '@prisma/client';
 import prisma from '../config/database';
 import { AppError } from '../middleware/error.middleware';
-import logger from '../utils/logger';
 
 interface OAuthProfile {
   id: string;
@@ -16,8 +15,6 @@ export class AuthService {
     if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
       throw new AppError(500, 'JWT secrets not configured');
     }
-
-    const payload = { userId };
 
     const accessToken = jwt.sign(
       { id: userId },

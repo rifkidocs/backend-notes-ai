@@ -1,5 +1,5 @@
 import prisma from '../config/database';
-import model, { GoogleGenerativeAI } from '../config/gemini';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AppError } from '../middleware/error.middleware';
 import logger from '../utils/logger';
 
@@ -9,14 +9,22 @@ export class AIService {
 
   constructor() {
     if (!process.env.GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY is not configured');
+      logger.warn('GEMINI_API_KEY is not configured, AI features will be disabled');
     }
 
-    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
     this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
   }
 
+  private ensureConfigured() {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new AppError(500, 'AI features are not configured. Please set GEMINI_API_KEY.');
+    }
+  }
+
   async generateContent(prompt: string, context?: string) {
+    this.ensureConfigured();
+
     try {
       const fullPrompt = context
         ? `Context: ${context}\n\nTask: ${prompt}`
@@ -37,6 +45,7 @@ export class AIService {
   }
 
   async continueWriting(currentContent: string) {
+    this.ensureConfigured();
     const prompt = `Continue the following text in a natural and coherent way:\n\n${currentContent}`;
 
     const result = await this.model.generateContent(prompt);
@@ -50,6 +59,7 @@ export class AIService {
   }
 
   async summarizeDocument(content: string) {
+    this.ensureConfigured();
     // Convert JSON content to text if needed
     let textContent = content;
     if (typeof content === 'object') {
@@ -69,6 +79,7 @@ export class AIService {
   }
 
   async expandSection(section: string, topic: string) {
+    this.ensureConfigured();
     const prompt = `Expand on this topic: "${topic}". Current content:\n\n${section}\n\nProvide additional details, examples, and insights.`;
 
     const result = await this.model.generateContent(prompt);
@@ -82,6 +93,7 @@ export class AIService {
   }
 
   async fixGrammar(text: string) {
+    this.ensureConfigured();
     const prompt = `Fix grammar, spelling, and improve readability while maintaining the original meaning and tone:\n\n${text}`;
 
     const result = await this.model.generateContent(prompt);
@@ -95,6 +107,7 @@ export class AIService {
   }
 
   async generateBlogPost(topic: string, tone: 'formal' | 'casual' | 'professional' = 'professional') {
+    this.ensureConfigured();
     const prompt = `Write a comprehensive blog post about "${topic}" in a ${tone} tone. Include an introduction, main body with key points, and a conclusion.`;
 
     const result = await this.model.generateContent(prompt);
@@ -108,6 +121,7 @@ export class AIService {
   }
 
   async generateOutline(topic: string) {
+    this.ensureConfigured();
     const prompt = `Create a detailed outline for an article or document about "${topic}". Include main sections and subsections with bullet points.`;
 
     const result = await this.model.generateContent(prompt);
@@ -135,6 +149,7 @@ export class AIService {
     } catch (error) {
       logger.error('Failed to save AI generation:', error);
       // Don't throw error here as it's not critical
+      return null;
     }
   }
 

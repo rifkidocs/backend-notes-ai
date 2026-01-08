@@ -4,7 +4,10 @@
       "Bash(dir:*)",
       "Bash(npm init:*)",
       "Bash(npm install:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(node:*)",
+      "Bash(npm run prisma:migrate:*)"
     ]
   }
 }

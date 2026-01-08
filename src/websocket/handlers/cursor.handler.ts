@@ -12,12 +12,18 @@ interface CursorPosition {
   ch: number;
 }
 
-export class CursorHandler {
-  private io: SocketIOServer;
+function getUserColor(userId: string): string {
+  // Generate a consistent color based on user ID
+  const colors = [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A',
+    '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
+  ];
+  const index = parseInt(userId.slice(-4), 16) % colors.length;
+  return colors[index];
+}
 
-  constructor(io: SocketIOServer) {
-    this.io = io;
-  }
+export class CursorHandler {
+  constructor(private _io: SocketIOServer) {}
 
   handleCursorUpdate(socket: any, data: { noteId: string; position: CursorPosition }) {
     try {
@@ -33,7 +39,7 @@ export class CursorHandler {
         userId: user.id,
         userName: user.name || user.email,
         position,
-        color: this.getUserColor(user.id),
+        color: getUserColor(user.id),
         timestamp: new Date().toISOString(),
       });
 
@@ -41,15 +47,5 @@ export class CursorHandler {
     } catch (error) {
       logger.error('Error handling cursor update:', error);
     }
-  }
-
-  private getUserColor(userId: string): string {
-    // Generate a consistent color based on user ID
-    const colors = [
-      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A',
-      '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
-    ];
-    const index = parseInt(userId.slice(-4), 16) % colors.length;
-    return colors[index];
   }
 }

@@ -4,16 +4,16 @@ import { Strategy as GithubStrategy } from 'passport-github2';
 import { Provider } from '@prisma/client';
 import authService from '../services/auth.service';
 
-passport.serializeUser((user: any, done) => {
-  done(null, user.id);
+passport.serializeUser((user: any, _done: any) => {
+  _done(null, user.id);
 });
 
-passport.deserializeUser(async (id: string, done) => {
+passport.deserializeUser(async (id: string, _done: any) => {
   try {
     const user = await authService.getUserById(id);
-    done(null, user);
+    _done(null, user);
   } catch (error) {
-    done(error, null);
+    _done(error, null);
   }
 });
 
@@ -25,7 +25,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
       callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
       try {
         const user = await authService.findOrCreateUser(
           {
@@ -52,7 +52,7 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
       callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:5000/api/auth/github/callback',
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
       try {
         const user = await authService.findOrCreateUser(
           {

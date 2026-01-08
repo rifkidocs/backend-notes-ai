@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../types/express.d';
+import { AuthenticatedRequest } from '../models/express.types';
 import notesService from '../services/notes.service';
 import logger from '../utils/logger';
 

@@ -43,7 +43,7 @@ app.use(cookieParser());
 app.use(compression());
 
 // Request logging middleware
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   logger.info(`${req.method} ${req.path}`, {
     ip: req.ip,
     userAgent: req.get('user-agent'),
@@ -64,7 +64,7 @@ app.use(errorHandler);
 if (process.env.NODE_ENV !== 'test') {
   // Import SocketServer only when not in test mode
   import('./websocket/socket.server').then(({ default: SocketServer }) => {
-    const socketServer = new SocketServer(httpServer);
+    new SocketServer(httpServer);
     logger.info('WebSocket server initialized');
   }).catch((error) => {
     logger.error('Failed to initialize WebSocket server:', error);
