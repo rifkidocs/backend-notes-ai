@@ -139,13 +139,22 @@ export class NotesService {
   ) {
     const note = await prisma.note.findUnique({
       where: { id: noteId },
+      include: {
+        sharedAccess: true,
+      },
     });
 
     if (!note) {
       throw new AppError(404, 'Note not found');
     }
 
-    if (note.ownerId !== userId) {
+    const isOwner = note.ownerId === userId;
+    const isPublicEdit = note.isPublic && note.publicAccess === 'EDIT';
+    const hasSharedEdit = note.sharedAccess.some(
+      (access) => access.userId === userId && access.accessLevel === 'EDIT'
+    );
+
+    if (!isOwner && !isPublicEdit && !hasSharedEdit) {
       throw new AppError(403, 'You do not have permission to update this note');
     }
 
