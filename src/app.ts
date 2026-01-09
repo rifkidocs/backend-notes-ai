@@ -5,13 +5,15 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+
+// Load environment variables FIRST before any other imports that depend on them
+dotenv.config();
+
 import logger from './utils/logger';
 import routes from './routes';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 import { generalLimiter } from './middleware/rateLimit.middleware';
-
-// Load environment variables
-dotenv.config();
+import './config/oauth'; // Register Passport strategies (requires env vars)
 
 const app: Application = express();
 const httpServer = createServer(app);
