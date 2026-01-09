@@ -35,7 +35,7 @@ export class CursorHandler {
       }
 
       // Broadcast cursor position to other users in the document
-      socket.to(`document:${noteId}`).emit('cursor:moved', {
+      socket.to(`note_${noteId}`).emit('cursor:moved', {
         userId: user.id,
         userName: user.name || user.email,
         position,

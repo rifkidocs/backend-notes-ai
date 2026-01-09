@@ -31,7 +31,7 @@ export class PresenceHandler {
       this.userSessions.get(user.id)!.add(socket.id);
 
       // Get all online users in the document
-      const room = this.io.sockets.adapter.rooms.get(`document:${noteId}`);
+      const room = this.io.sockets.adapter.rooms.get(`note_${noteId}`);
       const onlineUsers: string[] = [];
 
       if (room) {
@@ -47,7 +47,7 @@ export class PresenceHandler {
       }
 
       // Send presence update
-      this.io.to(`document:${noteId}`).emit('presence:online', {
+      this.io.to(`note_${noteId}`).emit('presence:online', {
         noteId,
         users: onlineUsers.map((userId) => ({
           id: userId,
@@ -79,7 +79,7 @@ export class PresenceHandler {
           // Notify all rooms that user is offline
           const rooms = socket.rooms;
           for (const roomName of rooms) {
-            if (roomName.startsWith('document:')) {
+            if (roomName.startsWith('note_')) {
               this.io.to(roomName).emit('presence:offline', {
                 userId: user.id,
                 timestamp: new Date().toISOString(),

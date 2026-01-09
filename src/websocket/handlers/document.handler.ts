@@ -42,7 +42,7 @@ export class DocumentEditHandler {
       }
 
       // Join the document room
-      const roomName = `document:${noteId}`;
+      const roomName = `note_${noteId}`;
       socket.join(roomName);
 
       // Initialize or get document room
@@ -93,7 +93,7 @@ export class DocumentEditHandler {
     try {
       const { noteId } = data;
       const user = socket.user as SocketUser;
-      const roomName = `document:${noteId}`;
+      const roomName = `note_${noteId}`;
 
       socket.leave(roomName);
 
@@ -139,7 +139,9 @@ export class DocumentEditHandler {
 
       const room = this.documentRooms.get(noteId);
       if (!room) {
-        socket.emit('error', { message: 'Document room not found' });
+        // If room doesn't exist in memory but should (maybe server restart), 
+        // we might want to recover or error. For now, error.
+        socket.emit('error', { message: 'Document room not found. Please rejoin.' });
         return;
       }
 
@@ -152,42 +154,58 @@ export class DocumentEditHandler {
         return;
       }
 
-      // Save to database
+      // Increment version immediately
+      room.version++;
+      const currentServerVersion = room.version;
+
+      // Broadcast to all users in the room (including sender)
+      this.io.to(`note_${noteId}`).emit('document:updated', {
+        operations,
+        version: currentServerVersion,
+        userId: user.id,
+        userName: user.name || user.email,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Async save to database
+      this.saveDocumentEdit(noteId, user.id, operations, currentServerVersion, socket);
+
+      logger.info(`User ${user.email} edited document ${noteId}, version ${currentServerVersion}`);
+    } catch (error) {
+      logger.error('Error handling document edit:', error);
+      socket.emit('error', { message: 'Failed to process edit' });
+    }
+  }
+
+  private async saveDocumentEdit(
+    noteId: string, 
+    userId: string, 
+    operations: any[], 
+    version: number, 
+    socket: any
+  ) {
+    try {
+      // Save edit history
       await prisma.documentEdit.create({
         data: {
           noteId,
-          userId: user.id,
+          userId,
           operations,
-          version: room.version + 1,
+          version,
           ipAddress: socket.handshake.address,
           userAgent: socket.handshake.headers['user-agent'],
         },
       });
 
-      // Update version
-      room.version++;
-
-      // Update document content (simplified - in production, use OT)
+      // Update note timestamp
       await prisma.note.update({
         where: { id: noteId },
         data: {
           updatedAt: new Date(),
         },
       });
-
-      // Broadcast to all users in the room (including sender for confirmation)
-      this.io.to(`document:${noteId}`).emit('document:updated', {
-        operations,
-        version: room.version,
-        userId: user.id,
-        userName: user.name || user.email,
-        timestamp: new Date().toISOString(),
-      });
-
-      logger.info(`User ${user.email} edited document ${noteId}, version ${room.version}`);
     } catch (error) {
-      logger.error('Error handling document edit:', error);
-      socket.emit('error', { message: 'Failed to save edit' });
+      logger.error(`Error saving document edit for note ${noteId}:`, error);
     }
   }
 
@@ -200,7 +218,7 @@ export class DocumentEditHandler {
         room.users.delete(socket.id);
 
         // Notify others
-        this.io.to(`document:${noteId}`).emit('document:user:left', {
+        this.io.to(`note_${noteId}`).emit('document:user:left', {
           userId: user.id,
           socketId: socket.id,
         });
