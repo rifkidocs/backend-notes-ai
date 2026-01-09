@@ -30,10 +30,10 @@ Authorization: Bearer <access_token>
 
 ### Token Types
 
-| Token Type | Expiry | Usage |
-|------------|--------|-------|
-| Access Token | 15 minutes | API authentication |
-| Refresh Token | 7 days | Obtain new access token |
+| Token Type    | Expiry     | Usage                   |
+| ------------- | ---------- | ----------------------- |
+| Access Token  | 15 minutes | API authentication      |
+| Refresh Token | 7 days     | Obtain new access token |
 
 ---
 
@@ -196,12 +196,12 @@ GET /api/notes?page=1&limit=20&search=keyword&includeDeleted=false
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| page | number | 1 | Page number |
-| limit | number | 20 | Items per page |
-| search | string | - | Search in title |
-| includeDeleted | boolean | false | Include deleted notes |
+| Parameter      | Type    | Default | Description           |
+| -------------- | ------- | ------- | --------------------- |
+| page           | number  | 1       | Page number           |
+| limit          | number  | 20      | Items per page        |
+| search         | string  | -       | Search in title       |
+| includeDeleted | boolean | false   | Include deleted notes |
 
 **Response:** `200 OK`
 
@@ -252,10 +252,10 @@ GET /api/notes/shared?page=1&limit=20
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| page | number | 1 | Page number |
-| limit | number | 20 | Items per page |
+| Parameter | Type   | Default | Description    |
+| --------- | ------ | ------- | -------------- |
+| page      | number | 1       | Page number    |
+| limit     | number | 20      | Items per page |
 
 **Response:** `200 OK`
 
@@ -307,9 +307,9 @@ GET /api/notes/:id
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -402,10 +402,10 @@ POST /api/notes
 }
 ```
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| title | string | No | "Untitled" | Note title |
-| content | object | No | Empty doc | Rich text content (JSON) |
+| Field   | Type   | Required | Default    | Description              |
+| ------- | ------ | -------- | ---------- | ------------------------ |
+| title   | string | No       | "Untitled" | Note title               |
+| content | object | No       | Empty doc  | Rich text content (JSON) |
 
 **Response:** `201 Created`
 
@@ -446,9 +446,9 @@ PATCH /api/notes/:id
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Request Body:**
 
@@ -461,12 +461,12 @@ PATCH /api/notes/:id
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| title | string | No | New title |
-| content | object | No | New content |
-| icon | string | No | Emoji icon |
-| coverImage | string | No | Cover image URL |
+| Field      | Type   | Required | Description     |
+| ---------- | ------ | -------- | --------------- |
+| title      | string | No       | New title       |
+| content    | object | No       | New content     |
+| icon       | string | No       | Emoji icon      |
+| coverImage | string | No       | Cover image URL |
 
 **Response:** `200 OK`
 
@@ -507,9 +507,9 @@ DELETE /api/notes/:id
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -533,9 +533,9 @@ PATCH /api/notes/:id/archive
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -564,9 +564,9 @@ PATCH /api/notes/:id/restore
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -599,9 +599,9 @@ GET /api/notes/:id/sharing
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -646,9 +646,9 @@ POST /api/notes/:id/sharing/public
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Request Body:**
 
@@ -658,9 +658,9 @@ POST /api/notes/:id/sharing/public
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| accessLevel | enum | Yes | "VIEW" or "EDIT" |
+| Field       | Type | Required | Description      |
+| ----------- | ---- | -------- | ---------------- |
+| accessLevel | enum | Yes      | "VIEW" or "EDIT" |
 
 **Response:** `200 OK`
 
@@ -689,9 +689,9 @@ DELETE /api/notes/:id/sharing/public
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -720,9 +720,9 @@ POST /api/notes/:id/sharing/invite
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Request Body:**
 
@@ -733,10 +733,10 @@ POST /api/notes/:id/sharing/invite
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| email | string | Yes | User email to invite |
-| accessLevel | enum | Yes | "VIEW" or "EDIT" |
+| Field       | Type   | Required | Description          |
+| ----------- | ------ | -------- | -------------------- |
+| email       | string | Yes      | User email to invite |
+| accessLevel | enum   | Yes      | "VIEW" or "EDIT"     |
 
 **Response:** `201 Created`
 
@@ -776,9 +776,9 @@ POST /api/notes/invite/accept/:token
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| token | string | Invite token |
+| Parameter | Type   | Description  |
+| --------- | ------ | ------------ |
+| token     | string | Invite token |
 
 **Response:** `200 OK`
 
@@ -811,10 +811,10 @@ DELETE /api/notes/:id/sharing/:accessId
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
-| accessId | string | Shared access ID |
+| Parameter | Type   | Description      |
+| --------- | ------ | ---------------- |
+| id        | string | Note ID          |
+| accessId  | string | Shared access ID |
 
 **Response:** `200 OK`
 
@@ -838,10 +838,10 @@ PATCH /api/notes/:id/sharing/:accessId
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
-| accessId | string | Shared access ID |
+| Parameter | Type   | Description      |
+| --------- | ------ | ---------------- |
+| id        | string | Note ID          |
+| accessId  | string | Shared access ID |
 
 **Request Body:**
 
@@ -851,9 +851,9 @@ PATCH /api/notes/:id/sharing/:accessId
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| accessLevel | enum | Yes | "VIEW" or "EDIT" |
+| Field       | Type | Required | Description      |
+| ----------- | ---- | -------- | ---------------- |
+| accessLevel | enum | Yes      | "VIEW" or "EDIT" |
 
 **Response:** `200 OK`
 
@@ -887,9 +887,9 @@ GET /api/notes/public/:id
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| id | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| id        | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -939,18 +939,18 @@ POST /api/ai/generate
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| prompt | string | Yes | Content generation prompt |
-| context | string | No | Additional context |
-| noteId | string | No | Note ID for history tracking |
+| Field   | Type   | Required | Description                  |
+| ------- | ------ | -------- | ---------------------------- |
+| prompt  | string | Yes      | Content generation prompt    |
+| context | string | No       | Additional context           |
+| noteId  | string | No       | Note ID for history tracking |
 
 **Response:** `200 OK`
 
 ```json
 {
   "content": "Artificial Intelligence is transforming...",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -981,7 +981,7 @@ POST /api/ai/continue
 ```json
 {
   "continuation": "a classic example of a pangram, a sentence that contains all letters of the alphabet.",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -1012,7 +1012,7 @@ POST /api/ai/summarize
 ```json
 {
   "summary": "This document discusses the key points of...",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -1044,7 +1044,7 @@ POST /api/ai/expand
 ```json
 {
   "expansion": "Machine learning is a subset of artificial intelligence that focuses on...",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -1075,7 +1075,7 @@ POST /api/ai/grammar
 ```json
 {
   "correctedText": "She doesn't know anything about the situation.",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -1102,17 +1102,17 @@ POST /api/ai/blog
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| topic | string | Yes | Blog post topic |
-| tone | enum | No | "formal", "casual", or "professional" (default) |
+| Field | Type   | Required | Description                                     |
+| ----- | ------ | -------- | ----------------------------------------------- |
+| topic | string | Yes      | Blog post topic                                 |
+| tone  | enum   | No       | "formal", "casual", or "professional" (default) |
 
 **Response:** `200 OK`
 
 ```json
 {
   "content": "# The Future of Web Development\n\nWeb development is evolving...",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -1143,7 +1143,7 @@ POST /api/ai/outline
 ```json
 {
   "outline": "## Climate Change Solutions\n\n### I. Introduction\n- Overview of climate change\n- Importance of action\n\n### II. Renewable Energy\n- Solar power\n- Wind energy\n-...",
-  "model": "gemini-pro"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -1161,9 +1161,9 @@ GET /api/ai/history/:noteId
 
 **URL Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| noteId | string | Note ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| noteId    | string | Note ID     |
 
 **Response:** `200 OK`
 
@@ -1174,7 +1174,7 @@ GET /api/ai/history/:noteId
     "noteId": "clx1234567890",
     "prompt": "Write about AI",
     "generatedContent": "Artificial Intelligence is...",
-    "model": "gemini-pro",
+    "model": "gemini-2.5-flash",
     "tokensUsed": null,
     "createdAt": "2024-01-15T10:30:00.000Z"
   }
@@ -1190,10 +1190,10 @@ GET /api/ai/history/:noteId
 Connect to WebSocket server:
 
 ```javascript
-const socket = io('http://localhost:5000', {
+const socket = io("http://localhost:5000", {
   auth: {
-    token: 'your-access-token'
-  }
+    token: "your-access-token",
+  },
 });
 ```
 
@@ -1202,7 +1202,7 @@ const socket = io('http://localhost:5000', {
 Send token on connection:
 
 ```javascript
-socket.emit('authenticate', { token: 'your-access-token' });
+socket.emit("authenticate", { token: "your-access-token" });
 ```
 
 ### Document Events
@@ -1210,7 +1210,7 @@ socket.emit('authenticate', { token: 'your-access-token' });
 #### Join Document
 
 ```javascript
-socket.emit('document:join', { noteId: 'clx1234567890' });
+socket.emit("document:join", { noteId: "clx1234567890" });
 ```
 
 **Response Events:**
@@ -1232,15 +1232,15 @@ socket.on('document:user:joined', {
 #### Leave Document
 
 ```javascript
-socket.emit('document:leave', { noteId: 'clx1234567890' });
+socket.emit("document:leave", { noteId: "clx1234567890" });
 ```
 
 **Response Events:**
 
 ```javascript
-socket.on('document:user:left', {
-  userId: 'clx0987654321',
-  socketId: 'abc123'
+socket.on("document:user:left", {
+  userId: "clx0987654321",
+  socketId: "abc123",
 });
 ```
 
@@ -1249,10 +1249,10 @@ socket.on('document:user:left', {
 #### Edit Document
 
 ```javascript
-socket.emit('document:edit', {
-  noteId: 'clx1234567890',
-  operations: [{ type: 'insert', position: 0, text: 'Hello' }],
-  version: 5
+socket.emit("document:edit", {
+  noteId: "clx1234567890",
+  operations: [{ type: "insert", position: 0, text: "Hello" }],
+  version: 5,
 });
 ```
 
@@ -1260,18 +1260,18 @@ socket.emit('document:edit', {
 
 ```javascript
 // Broadcast to all users in room
-socket.on('document:updated', {
-  operations: [{ type: 'insert', position: 0, text: 'Hello' }],
+socket.on("document:updated", {
+  operations: [{ type: "insert", position: 0, text: "Hello" }],
   version: 6,
-  userId: 'clx0987654321',
-  userName: 'John Doe',
-  timestamp: '2024-01-15T10:30:00.000Z'
+  userId: "clx0987654321",
+  userName: "John Doe",
+  timestamp: "2024-01-15T10:30:00.000Z",
 });
 
 // Version conflict
-socket.on('document:conflict', {
+socket.on("document:conflict", {
   currentVersion: 6,
-  yourVersion: 5
+  yourVersion: 5,
 });
 ```
 
@@ -1282,20 +1282,20 @@ socket.on('document:conflict', {
 #### Update Cursor
 
 ```javascript
-socket.emit('cursor:update', {
-  noteId: 'clx1234567890',
-  position: { line: 5, ch: 10 }
+socket.emit("cursor:update", {
+  noteId: "clx1234567890",
+  position: { line: 5, ch: 10 },
 });
 ```
 
 **Response Events:**
 
 ```javascript
-socket.on('cursor:moved', {
-  userId: 'clx0987654321',
-  userName: 'John Doe',
+socket.on("cursor:moved", {
+  userId: "clx0987654321",
+  userName: "John Doe",
   position: { line: 5, ch: 10 },
-  color: '#FF5733'
+  color: "#FF5733",
 });
 ```
 
@@ -1306,17 +1306,15 @@ socket.on('cursor:moved', {
 #### Subscribe to Presence
 
 ```javascript
-socket.emit('presence:subscribe', { noteId: 'clx1234567890' });
+socket.emit("presence:subscribe", { noteId: "clx1234567890" });
 ```
 
 **Response Events:**
 
 ```javascript
-socket.on('presence:online', {
-  noteId: 'clx1234567890',
-  users: [
-    { userId: 'clx0987654321', userName: 'John Doe', color: '#FF5733' }
-  ]
+socket.on("presence:online", {
+  noteId: "clx1234567890",
+  users: [{ userId: "clx0987654321", userName: "John Doe", color: "#FF5733" }],
 });
 ```
 
@@ -1325,8 +1323,8 @@ socket.on('presence:online', {
 ### Error Events
 
 ```javascript
-socket.on('error', {
-  message: 'You do not have access to this document'
+socket.on("error", {
+  message: "You do not have access to this document",
 });
 ```
 
@@ -1345,28 +1343,28 @@ All error responses follow this format:
 
 ### Common HTTP Status Codes
 
-| Code | Description |
-|------|-------------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request |
-| 401 | Unauthorized (missing/invalid token) |
-| 403 | Forbidden (no permission) |
-| 404 | Not Found |
-| 429 | Too Many Requests |
-| 500 | Internal Server Error |
+| Code | Description                          |
+| ---- | ------------------------------------ |
+| 200  | Success                              |
+| 201  | Created                              |
+| 400  | Bad Request                          |
+| 401  | Unauthorized (missing/invalid token) |
+| 403  | Forbidden (no permission)            |
+| 404  | Not Found                            |
+| 429  | Too Many Requests                    |
+| 500  | Internal Server Error                |
 
 ### Error Types
 
-| Error | Description |
-|-------|-------------|
-| Unauthorized | No token provided or invalid token |
-| Token expired | Access token has expired |
-| Bad Request | Invalid request parameters |
-| Not Found | Resource not found |
-| Forbidden | Insufficient permissions |
-| Too many requests | Rate limit exceeded |
-| Internal Server Error | Server error |
+| Error                 | Description                        |
+| --------------------- | ---------------------------------- |
+| Unauthorized          | No token provided or invalid token |
+| Token expired         | Access token has expired           |
+| Bad Request           | Invalid request parameters         |
+| Not Found             | Resource not found                 |
+| Forbidden             | Insufficient permissions           |
+| Too many requests     | Rate limit exceeded                |
+| Internal Server Error | Server error                       |
 
 ---
 
@@ -1374,11 +1372,11 @@ All error responses follow this format:
 
 ### Rate Limit Categories
 
-| Category | Limit | Window | Endpoints |
-|----------|-------|--------|-----------|
-| General | 100 requests | 15 minutes | Most API endpoints |
-| Auth | 5 requests | 15 minutes | OAuth endpoints, refresh |
-| AI | 10 requests | 1 minute | All AI endpoints |
+| Category | Limit        | Window     | Endpoints                |
+| -------- | ------------ | ---------- | ------------------------ |
+| General  | 100 requests | 15 minutes | Most API endpoints       |
+| Auth     | 5 requests   | 15 minutes | OAuth endpoints, refresh |
+| AI       | 10 requests  | 1 minute   | All AI endpoints         |
 
 ### Rate Limit Headers
 
@@ -1413,7 +1411,7 @@ interface User {
   email: string;
   name: string | null;
   avatar: string | null;
-  provider: 'GOOGLE' | 'GITHUB';
+  provider: "GOOGLE" | "GITHUB";
   createdAt: string;
   lastLoginAt: string;
 }
@@ -1425,13 +1423,13 @@ interface User {
 interface Note {
   id: string;
   title: string;
-  content: object;  // Rich text JSON
+  content: object; // Rich text JSON
   icon: string | null;
   coverImage: string | null;
   isDeleted: boolean;
   isArchived: boolean;
   isPublic: boolean;
-  publicAccess: 'VIEW' | 'EDIT' | null;
+  publicAccess: "VIEW" | "EDIT" | null;
   ownerId: string;
   createdAt: string;
   updatedAt: string;
@@ -1445,7 +1443,7 @@ interface Note {
 ```typescript
 interface SharedAccess {
   id: string;
-  accessLevel: 'VIEW' | 'EDIT';
+  accessLevel: "VIEW" | "EDIT";
   noteId: string;
   userId: string | null;
   user?: User;

@@ -135,7 +135,7 @@ model AIGeneration {
   noteId      String
   prompt      String
   generatedContent Json
-  model       String   // e.g., "gemini-pro"
+  model       String   // e.g., "gemini-2.5-flash"
   tokensUsed  Int?
 
   createdAt   DateTime @default(now())

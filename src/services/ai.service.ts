@@ -13,7 +13,7 @@ export class AIService {
     }
 
     this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   }
 
   private ensureConfigured() {
@@ -36,7 +36,7 @@ export class AIService {
 
       return {
         content: text,
-        model: 'gemini-pro',
+        model: 'gemini-2.5-flash',
       };
     } catch (error: any) {
       logger.error('Gemini API error:', error);
@@ -54,7 +54,7 @@ export class AIService {
 
     return {
       continuation: text,
-      model: 'gemini-pro',
+      model: 'gemini-2.5-flash',
     };
   }
 
@@ -74,7 +74,7 @@ export class AIService {
 
     return {
       summary: text,
-      model: 'gemini-pro',
+      model: 'gemini-2.5-flash',
     };
   }
 
@@ -88,13 +88,13 @@ export class AIService {
 
     return {
       expansion: text,
-      model: 'gemini-pro',
+      model: 'gemini-2.5-flash',
     };
   }
 
   async fixGrammar(text: string) {
     this.ensureConfigured();
-    const prompt = `Fix grammar, spelling, and improve readability while maintaining the original meaning and tone:\n\n${text}`;
+    const prompt = `Fix grammar, spelling, and improve readability for the following text. Return ONLY the corrected text without any introductory phrases, explanations, or markdown formatting:\n\n${text}`;
 
     const result = await this.model.generateContent(prompt);
     const response = await result.response;
@@ -102,7 +102,7 @@ export class AIService {
 
     return {
       correctedText,
-      model: 'gemini-pro',
+      model: 'gemini-2.5-flash',
     };
   }
 
@@ -116,7 +116,7 @@ export class AIService {
 
     return {
       content,
-      model: 'gemini-pro',
+      model: 'gemini-2.5-flash',
     };
   }
 
@@ -130,7 +130,7 @@ export class AIService {
 
     return {
       outline,
-      model: 'gemini-pro',
+      model: 'gemini-2.5-flash',
     };
   }
 
