@@ -189,7 +189,7 @@ export class NotesService {
     }
 
     if (note.ownerId !== userId) {
-      throw new AppError(403, 'You do not have permission to delete this note');
+      throw new AppError(403, 'Only the owner can delete this note');
     }
 
     await prisma.note.update({
