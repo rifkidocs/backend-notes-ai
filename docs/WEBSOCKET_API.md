@@ -45,15 +45,16 @@ Panggil ini saat user membuka halaman editor.
     ```javascript
     socket.on("document:users", ({ users }) => {
       console.log("Current users in room:", users);
-      // users: [{ id: "user_1", name: "Alice" }, ...]
+      // users: [{ userId: "uuid-1", userName: "Alice", color: "#FF5733", socketId: "s-1" }, ...]
     });
     ```
 
 *   **Listen (Server -> Client):** `document:user:joined` (Notifikasi user baru masuk)
     Diterima oleh user lain di room yang sama.
     ```javascript
-    socket.on("document:user:joined", ({ userId, userName, socketId }) => {
+    socket.on("document:user:joined", ({ userId, userName, color, socketId }) => {
       console.log(`${userName} joined!`);
+      // Simpan color untuk rendering kursor/avatar
     });
     ```
 

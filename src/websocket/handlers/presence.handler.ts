@@ -1,5 +1,6 @@
 import { Server as SocketIOServer } from 'socket.io';
 import logger from '../../utils/logger';
+import { getColor } from '../utils/color';
 
 interface SocketUser {
   id: string;
@@ -32,15 +33,19 @@ export class PresenceHandler {
 
       // Get all online users in the document
       const room = this.io.sockets.adapter.rooms.get(`note_${noteId}`);
-      const onlineUsers: string[] = [];
+      const onlineUsers: Map<string, { id: string; name: string; color: string }> = new Map();
 
       if (room) {
         for (const socketId of room) {
           const clientSocket = this.io.sockets.sockets.get(socketId);
           if (clientSocket && (clientSocket as any).user) {
             const socketUser = (clientSocket as any).user as SocketUser;
-            if (!onlineUsers.includes(socketUser.id)) {
-              onlineUsers.push(socketUser.id);
+            if (!onlineUsers.has(socketUser.id)) {
+              onlineUsers.set(socketUser.id, {
+                id: socketUser.id,
+                name: socketUser.name || socketUser.email.split('@')[0],
+                color: getColor(socketUser.id)
+              });
             }
           }
         }
@@ -49,9 +54,7 @@ export class PresenceHandler {
       // Send presence update
       this.io.to(`note_${noteId}`).emit('presence:online', {
         noteId,
-        users: onlineUsers.map((userId) => ({
-          id: userId,
-        })),
+        users: Array.from(onlineUsers.values()),
         timestamp: new Date().toISOString(),
       });
 

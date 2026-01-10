@@ -22,7 +22,7 @@ export class SocketServer {
     });
 
     this.documentHandler = new DocumentEditHandler(this.io);
-    this.cursorHandler = new CursorHandler(this.io);
+    this.cursorHandler = new CursorHandler(this.io, this.documentHandler);
     this.presenceHandler = new PresenceHandler(this.io);
 
     this.setupMiddleware();

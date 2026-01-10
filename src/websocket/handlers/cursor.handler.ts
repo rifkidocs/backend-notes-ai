@@ -1,49 +1,45 @@
 import { Server as SocketIOServer } from 'socket.io';
 import logger from '../../utils/logger';
-
-interface SocketUser {
-  id: string;
-  email: string;
-  name: string | null;
-}
+import { DocumentEditHandler } from './document.handler';
 
 interface CursorPosition {
   line: number;
   ch: number;
 }
 
-function getUserColor(userId: string): string {
-  // Generate a consistent color based on user ID
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A',
-    '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
-  ];
-  const index = parseInt(userId.slice(-4), 16) % colors.length;
-  return colors[index];
-}
-
 export class CursorHandler {
-  constructor(private _io: SocketIOServer) {}
+  constructor(
+    private _io: SocketIOServer,
+    private documentHandler: DocumentEditHandler
+  ) {}
 
   handleCursorUpdate(socket: any, data: { noteId: string; position: CursorPosition }) {
     try {
       const { noteId, position } = data;
-      const user = socket.user as SocketUser;
-
+      
       if (!noteId || !position) {
+        return;
+      }
+
+      // Get participant info from document handler (Source of Truth)
+      const participant = this.documentHandler.getParticipant(noteId, socket.id);
+
+      if (!participant) {
+        // If not in room, we shouldn't broadcast cursor
         return;
       }
 
       // Broadcast cursor position to other users in the document
       socket.to(`note_${noteId}`).emit('cursor:moved', {
-        userId: user.id,
-        userName: user.name || user.email,
+        userId: participant.userId,
+        userName: participant.userName,
+        color: participant.color,
+        socketId: socket.id,
         position,
-        color: getUserColor(user.id),
         timestamp: new Date().toISOString(),
       });
 
-      logger.debug(`Cursor update from ${user.email} in document ${noteId}`);
+      logger.debug(`Cursor update from ${participant.userName} in document ${noteId}`);
     } catch (error) {
       logger.error('Error handling cursor update:', error);
     }

@@ -2,10 +2,11 @@ import { Server as SocketIOServer } from 'socket.io';
 import logger from '../../utils/logger';
 import prisma from '../../config/database';
 import sharingService from '../../services/sharing.service';
+import { getColor } from '../utils/color';
 
 interface DocumentRoom {
   noteId: string;
-  users: Map<string, SocketUser>;
+  users: Map<string, Participant>;
   version: number;
 }
 
@@ -13,6 +14,13 @@ interface SocketUser {
   id: string;
   email: string;
   name: string | null;
+}
+
+interface Participant {
+  userId: string;
+  userName: string;
+  color: string;
+  socketId: string;
 }
 
 export class DocumentEditHandler {
@@ -65,20 +73,21 @@ export class DocumentEditHandler {
       }
 
       const room = this.documentRooms.get(noteId)!;
-      room.users.set(socket.id, user);
+      
+      const participant: Participant = {
+        userId: user.id,
+        userName: user.name || user.email.split('@')[0],
+        color: getColor(user.id),
+        socketId: socket.id
+      };
+
+      room.users.set(socket.id, participant);
 
       // Notify others in the room
-      socket.to(roomName).emit('document:user:joined', {
-        userId: user.id,
-        userName: user.name || user.email,
-        socketId: socket.id,
-      });
+      socket.to(roomName).emit('document:user:joined', participant);
 
       // Send current users to the new joiner
-      const users = Array.from(room.users.values()).map((u) => ({
-        id: u.id,
-        name: u.name || u.email,
-      }));
+      const users = Array.from(room.users.values());
 
       socket.emit('document:users', { users });
 
@@ -175,6 +184,11 @@ export class DocumentEditHandler {
       logger.error('Error handling document edit:', error);
       socket.emit('error', { message: 'Failed to process edit' });
     }
+  }
+
+  public getParticipant(noteId: string, socketId: string): Participant | undefined {
+    const room = this.documentRooms.get(noteId);
+    return room?.users.get(socketId);
   }
 
   private async saveDocumentEdit(
