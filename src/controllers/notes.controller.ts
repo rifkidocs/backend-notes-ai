@@ -69,7 +69,7 @@ export const getNoteById = async (req: AuthenticatedRequest, res: Response): Pro
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const note = await notesService.getNoteById(id, req.user.id);
 
@@ -106,7 +106,7 @@ export const updateNote = async (req: AuthenticatedRequest, res: Response): Prom
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { title, content, icon, coverImage } = req.body;
 
     const note = await notesService.updateNote(id, req.user.id, {
@@ -149,7 +149,7 @@ export const deleteNote = async (req: AuthenticatedRequest, res: Response): Prom
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     await notesService.deleteNote(id, req.user.id);
 
@@ -186,7 +186,7 @@ export const archiveNote = async (req: AuthenticatedRequest, res: Response): Pro
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const note = await notesService.archiveNote(id, req.user.id);
 
@@ -223,7 +223,7 @@ export const restoreNote = async (req: AuthenticatedRequest, res: Response): Pro
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const note = await notesService.restoreNote(id, req.user.id);
 
