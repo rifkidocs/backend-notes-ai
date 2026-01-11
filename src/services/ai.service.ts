@@ -1,136 +1,146 @@
+import axios from 'axios';
 import prisma from '../config/database';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AppError } from '../middleware/error.middleware';
 import logger from '../utils/logger';
 
 export class AIService {
-  private genAI: GoogleGenerativeAI;
-  private model: any;
+  private apiKey: string;
+  private baseURL: string = 'https://api.z.ai/api/paas/v4';
+  private model: string = 'glm-4.7';
 
   constructor() {
-    if (!process.env.GEMINI_API_KEY) {
-      logger.warn('GEMINI_API_KEY is not configured, AI features will be disabled');
+    this.apiKey = process.env.ZAI_API_KEY || '';
+    if (!this.apiKey) {
+      logger.warn('ZAI_API_KEY is not configured, AI features will be disabled');
     }
-
-    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   }
 
   private ensureConfigured() {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new AppError(500, 'AI features are not configured. Please set GEMINI_API_KEY.');
+    if (!this.apiKey) {
+      throw new AppError(500, 'AI features are not configured. Please set ZAI_API_KEY.');
+    }
+  }
+
+  private async callChatAPI(messages: { role: string; content: string }[]) {
+    this.ensureConfigured();
+
+    try {
+      const response = await axios.post(
+        `${this.baseURL}/chat/completions`,
+        {
+          model: this.model,
+          messages,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`,
+          },
+        }
+      );
+
+      const content = response.data.choices[0].message.content;
+      return {
+        content,
+        model: this.model,
+      };
+    } catch (error: any) {
+      logger.error('Z.AI API error:', error.response?.data || error.message);
+      throw new AppError(500, 'Failed to generate content with Z.AI');
     }
   }
 
   async generateContent(prompt: string, context?: string) {
-    this.ensureConfigured();
+    const messages = [
+      { role: 'system', content: 'You are a helpful AI assistant.' },
+      {
+        role: 'user',
+        content: context ? `Context: ${context}\n\nTask: ${prompt}` : prompt
+      }
+    ];
 
-    try {
-      const fullPrompt = context
-        ? `Context: ${context}\n\nTask: ${prompt}`
-        : prompt;
-
-      const result = await this.model.generateContent(fullPrompt);
-      const response = await result.response;
-      const text = response.text();
-
-      return {
-        content: text,
-        model: 'gemini-2.5-flash',
-      };
-    } catch (error: any) {
-      logger.error('Gemini API error:', error);
-      throw new AppError(500, 'Failed to generate content');
-    }
+    return this.callChatAPI(messages);
   }
 
   async continueWriting(currentContent: string) {
-    this.ensureConfigured();
-    const prompt = `Continue the following text in a natural and coherent way:\n\n${currentContent}`;
+    const messages = [
+      { role: 'system', content: 'You are a helpful AI assistant. Continue the user\'s text naturally.' },
+      { role: 'user', content: `Continue the following text in a natural and coherent way:\n\n${currentContent}` }
+    ];
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
+    const result = await this.callChatAPI(messages);
     return {
-      continuation: text,
-      model: 'gemini-2.5-flash',
+      continuation: result.content,
+      model: this.model,
     };
   }
 
   async summarizeDocument(content: string) {
-    this.ensureConfigured();
-    // Convert JSON content to text if needed
     let textContent = content;
     if (typeof content === 'object') {
       textContent = JSON.stringify(content);
     }
 
-    const prompt = `Summarize the following content concisely, highlighting the main points:\n\n${textContent}`;
+    const messages = [
+      { role: 'system', content: 'You are a helpful AI assistant that summarizes documents.' },
+      { role: 'user', content: `Summarize the following content concisely, highlighting the main points:\n\n${textContent}` }
+    ];
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
+    const result = await this.callChatAPI(messages);
     return {
-      summary: text,
-      model: 'gemini-2.5-flash',
+      summary: result.content,
+      model: this.model,
     };
   }
 
   async expandSection(section: string, topic: string) {
-    this.ensureConfigured();
-    const prompt = `Expand on this topic: "${topic}". Current content:\n\n${section}\n\nProvide additional details, examples, and insights.`;
+    const messages = [
+      { role: 'system', content: 'You are a helpful AI assistant.' },
+      { role: 'user', content: `Expand on this topic: "${topic}". Current content:\n\n${section}\n\nProvide additional details, examples, and insights.` }
+    ];
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
+    const result = await this.callChatAPI(messages);
     return {
-      expansion: text,
-      model: 'gemini-2.5-flash',
+      expansion: result.content,
+      model: this.model,
     };
   }
 
   async fixGrammar(text: string) {
-    this.ensureConfigured();
-    const prompt = `Fix grammar, spelling, and improve readability for the following text. Return ONLY the corrected text without any introductory phrases, explanations, or markdown formatting:\n\n${text}`;
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a helpful AI assistant. Fix grammar, spelling, and improve readability. Return ONLY the corrected text without any introductory phrases, explanations, or markdown formatting.'
+      },
+      { role: 'user', content: text }
+    ];
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const correctedText = response.text();
-
+    const result = await this.callChatAPI(messages);
     return {
-      correctedText,
-      model: 'gemini-2.5-flash',
+      correctedText: result.content,
+      model: this.model,
     };
   }
 
   async generateBlogPost(topic: string, tone: 'formal' | 'casual' | 'professional' = 'professional') {
-    this.ensureConfigured();
-    const prompt = `Write a comprehensive blog post about "${topic}" in a ${tone} tone. Include an introduction, main body with key points, and a conclusion.`;
+    const messages = [
+      { role: 'system', content: `You are a professional blog writer. Use a ${tone} tone.` },
+      { role: 'user', content: `Write a comprehensive blog post about "${topic}". Include an introduction, main body with key points, and a conclusion.` }
+    ];
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const content = response.text();
-
-    return {
-      content,
-      model: 'gemini-2.5-flash',
-    };
+    return this.callChatAPI(messages);
   }
 
   async generateOutline(topic: string) {
-    this.ensureConfigured();
-    const prompt = `Create a detailed outline for an article or document about "${topic}". Include main sections and subsections with bullet points.`;
+    const messages = [
+      { role: 'system', content: 'You are a helpful AI assistant.' },
+      { role: 'user', content: `Create a detailed outline for an article or document about "${topic}". Include main sections and subsections with bullet points.` }
+    ];
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const outline = response.text();
-
+    const result = await this.callChatAPI(messages);
     return {
-      outline,
-      model: 'gemini-2.5-flash',
+      outline: result.content,
+      model: this.model,
     };
   }
 
@@ -148,7 +158,6 @@ export class AIService {
       return generation;
     } catch (error) {
       logger.error('Failed to save AI generation:', error);
-      // Don't throw error here as it's not critical
       return null;
     }
   }
