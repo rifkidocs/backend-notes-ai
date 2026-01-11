@@ -244,7 +244,7 @@ export const getHistory = async (req: AuthenticatedRequest, res: Response): Prom
 
     const { noteId } = req.params;
 
-    const history = await aiService.getGenerationHistory(noteId);
+    const history = await aiService.getGenerationHistory(noteId as string);
 
     res.json(history);
   } catch (error) {

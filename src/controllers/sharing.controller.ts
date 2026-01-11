@@ -15,7 +15,7 @@ export const getSharingSettings = async (req: AuthenticatedRequest, res: Respons
 
     const { id } = req.params;
 
-    const settings = await sharingService.getSharingSettings(id, req.user.id);
+    const settings = await sharingService.getSharingSettings(id as string, req.user.id);
 
     res.json(settings);
   } catch (error: any) {
@@ -53,7 +53,7 @@ export const makePublic = async (req: AuthenticatedRequest, res: Response): Prom
     const { id } = req.params;
     const { accessLevel } = req.body;
 
-    const note = await sharingService.makeNotePublic(id, req.user.id, accessLevel);
+    const note = await sharingService.makeNotePublic(id as string, req.user.id, accessLevel);
 
     res.json(note);
   } catch (error: any) {
@@ -90,7 +90,7 @@ export const removePublic = async (req: AuthenticatedRequest, res: Response): Pr
 
     const { id } = req.params;
 
-    const note = await sharingService.removePublicAccess(id, req.user.id);
+    const note = await sharingService.removePublicAccess(id as string, req.user.id);
 
     res.json(note);
   } catch (error: any) {
@@ -128,7 +128,7 @@ export const inviteUser = async (req: AuthenticatedRequest, res: Response): Prom
     const { id } = req.params;
     const { email, accessLevel } = req.body;
 
-    const sharedAccess = await sharingService.inviteUserByEmail(id, req.user.id, email, accessLevel);
+    const sharedAccess = await sharingService.inviteUserByEmail(id as string, req.user.id, email, accessLevel);
 
     res.status(201).json(sharedAccess);
   } catch (error: any) {
@@ -165,7 +165,7 @@ export const acceptInvite = async (req: AuthenticatedRequest, res: Response): Pr
 
     const { token } = req.params;
 
-    const sharedAccess = await sharingService.acceptInvite(token, req.user.id);
+    const sharedAccess = await sharingService.acceptInvite(token as string, req.user.id);
 
     res.json(sharedAccess);
   } catch (error: any) {
@@ -202,7 +202,7 @@ export const removeAccess = async (req: AuthenticatedRequest, res: Response): Pr
 
     const { id, accessId } = req.params;
 
-    await sharingService.removeUserAccess(id, accessId, req.user.id);
+    await sharingService.removeUserAccess(id as string, accessId as string, req.user.id);
 
     res.json({ message: 'Access removed successfully' });
   } catch (error: any) {
@@ -240,7 +240,7 @@ export const updateAccess = async (req: AuthenticatedRequest, res: Response): Pr
     const { id, accessId } = req.params;
     const { accessLevel } = req.body;
 
-    const sharedAccess = await sharingService.updateAccessLevel(id, accessId, req.user.id, accessLevel);
+    const sharedAccess = await sharingService.updateAccessLevel(id as string, accessId as string, req.user.id, accessLevel);
 
     res.json(sharedAccess);
   } catch (error: any) {
@@ -269,7 +269,7 @@ export const getPublicNote = async (req: AuthenticatedRequest, res: Response): P
   try {
     const { id } = req.params;
 
-    const note = await sharingService.getPublicNote(id);
+    const note = await sharingService.getPublicNote(id as string);
 
     res.json(note);
   } catch (error: any) {
